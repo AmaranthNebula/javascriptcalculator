@@ -1,5 +1,4 @@
 $(document).ready(function() {
-   var currentIndex = 0;
    var values = [];
    
    function updateDisplay() {
@@ -37,23 +36,32 @@ $(document).ready(function() {
             
        }
    });
+   //
+   //             FINISH
    //when a mathematical symbol is clicked
    $(".symbol").click(function(e){
       e.preventDefault();
       var value = $(this).html();
       console.log(value); 
    });
-   
-   //when the clear all is clicked
+   //when  clear all is clicked
       $("#buttonC").click(function(e){
       e.preventDefault();
-      var value = $(this).html();
-      console.log(value); 
+      values = [];
+      $("#currentInput").html("0");
+      $("#pastInput").html("");
+      
    });
    // when the clear current is clicked
    $("#buttonCE").click(function(e){
       e.preventDefault();
       $("#currentInput").text("0");
+   });
+   //
+   //             FINISH
+   //when the memory buttons are clicked
+   $(".memory").click(function(e){
+       
    });
    
     
