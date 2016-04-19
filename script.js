@@ -5,10 +5,50 @@ $(document).ready(function() {
        
    }
    
-   function calculate(string) {
+function findDecimalPlaces(num) {
+    if (num.indexOf(".") === -1) {
+        return 0;
+    }
+    return ((num.length -1) - num.indexOf("."));
+}
+function calculate(firstNum, symbol, secondNum) {
+        var result;
+
+       // convert strings to numbers
+       if(firstNum.indexOf(".") !== -1 || secondNum.indexOf(".") !== -1) {
+          var firstDecimalRange = findDecimalPlaces(firstNum);
+          var secondDecimalRange = findDecimalPlaces(secondNum);
+          var decimalPlaces = Math.max(firstDecimalRange, secondDecimalRange);
+
+           //convert decimal to int
+           firstNum *= Math.pow(10, decimalPlaces);
+           secondNum *= Math.pow(10,decimalPlaces); 
+        }
+
+        firstNum = parseInt(firstNum);
+        secondNum = parseInt(secondNum);
+
+       switch (symbol) {
+           case "+":
+                result = firstNum + secondNum;
+            break;
+           case "-":
+               result = firstNum - secondNum;
+            break;
+           case "x":
+                result = firstNum * secondNum;
+            break;
+           case "&divide;":
+                result = firstNum / secondNum;
+            break;   
+       }
        
-       
-       
+       if (decimalPlaces !== undefined) {
+           //convert value back to decimal
+          result = result / Math.pow(10, decimalPlaces);
+       }
+       //find length of result - console.log(result.toString().length);
+       return result;
    }
    
    
@@ -35,6 +75,11 @@ $(document).ready(function() {
             $("#currentInput").append(value);
             
        }
+       
+       var temp = "2 + 3";
+       temp = parseFloat("+");
+       
+       console.log(temp);
    });
    //
    //             FINISH
@@ -43,6 +88,11 @@ $(document).ready(function() {
       e.preventDefault();
       var value = $(this).html();
       console.log(value); 
+      
+      //if squrt
+      //else if equals
+      //else if percent
+      // else
    });
    //when  clear all is clicked
       $("#buttonC").click(function(e){
