@@ -5,12 +5,31 @@ $(document).ready(function() {
        
    }
    
+ function calculateSqrt(num) {
+     var result = Math.sqrt(num);
+     // check if result is more than 13 chars
+     // call function to shorten if needed
+     return result;
+ }  
+ //calculate the percent
+ function calculatePercent(firstNum, symbol, secondNum) {
+    var result;
+     //convert percent to decimal
+    secondNum = secondNum / 100;
+    result  = result * secondNum;
+    //call function to calculate new amount
+     calculate(firstNum, symbol, result)
+ }
+ // determine how many characters there are after the period
+ // if no period return 0
 function findDecimalPlaces(num) {
     if (num.indexOf(".") === -1) {
         return 0;
     }
     return ((num.length -1) - num.indexOf("."));
 }
+
+//calculate the result of the first number and second number based on the mathematical symbol passed
 function calculate(firstNum, symbol, secondNum) {
         var result;
 
@@ -47,7 +66,10 @@ function calculate(firstNum, symbol, secondNum) {
            //convert value back to decimal
           result = result / Math.pow(10, decimalPlaces);
        }
-       //find length of result - console.log(result.toString().length);
+       
+       if (result.toString().length > 12) {
+           result = result.toExponential(5);
+       }
        return result;
    }
    
@@ -89,10 +111,17 @@ function calculate(firstNum, symbol, secondNum) {
       var value = $(this).html();
       console.log(value); 
       
-      //if squrt
-      //else if equals
-      //else if percent
-      // else
+      //square root
+      if (value === "&#8730;") {
+          
+      }else if ("=") {
+          
+      }else if ("%") {
+          
+      }else {
+          
+      }
+
    });
    //when  clear all is clicked
       $("#buttonC").click(function(e){
