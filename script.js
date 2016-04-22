@@ -1,5 +1,25 @@
 $(document).ready(function() {
    var values = [];
+   var equalClicked = false;
+   var memory;
+   
+   // this function updates the display on the calculator GUI
+   // noPast is a boolean that clears the pastInput of all text
+   function updateDisplay(result, pastInput) {
+       // clear previous inputs
+       $("#pastInput").html("");
+       $("#currentInput").html("");
+       
+       //update the current value with the result from previous
+       $("#currentInput").html(result);
+       
+       //if the past data is to be shown
+       // put the previous calcuations on the GUI
+       if(Boolean(pastInput)) {
+           $("#pastInput").html(pastInput);
+       }
+       
+   }
    
    //format values for display
    function formatForDisplay(num) {
@@ -37,13 +57,6 @@ $(document).ready(function() {
    //
    //calcuation functions
    //
-    function calculateSqrt(num) {
-        var result = Math.sqrt(num);
-        // check if result is more than 13 chars
-        // call function to shorten if needed
-        return result;
-    }  
-
     function calculatePercent(a, operator, b) {
         var result;
         // conver to decimal equivalent of percent
@@ -111,7 +124,9 @@ $(document).ready(function() {
 
     //convert floating point numbers to integers to fix
     // inaccuracy issue
-    function convertToInt(firstNum, SecondNum) {
+    function convertToInt(firstNum, secondNum) {
+        firstNum = firstNum.toString();
+        secondNum  = secondNum.toString();
         //if there is decimal point, convert to Int and return values
         if (firstNum.indexOf(".") !== -1 || secondNum.indexOf(".") !== -1){
                 //find decimal places for each number
@@ -127,7 +142,7 @@ $(document).ready(function() {
             return {"first": parseInt(firstNum), "second": parseInt(secondNum), "places": decimalPlaces};
         }
         // if it is not a decimal, convert to int from string and return 
-        return {"first": parseInt(firstNum), "second": parseInt(SecondNum), "places": undefined}
+        return {"first": parseInt(firstNum), "second": parseInt(secondNum), "places": undefined}
     }    
     
     function convertToDec(num, decimalPlaces, multipyBoolean) {
@@ -169,9 +184,12 @@ $(document).ready(function() {
        // get Value of button that was pressed
        var value = $(this).html();
        // update display with new number 
-       if (current.length < 13) {
-            if (/^0$/.test(current)) {
+       if (current.length < 16) {
+           
+            if (/^0$/.test(current) || equalClicked) {
                 $("#currentInput").text("");
+                //reset boolean to not clear next input
+                equalClicked = false;
             }
             $("#currentInput").append(value);
             
@@ -179,24 +197,46 @@ $(document).ready(function() {
 
    });
    //
-   //             FINISH
+   //     
+
    //when a mathematical symbol is clicked
    $(".symbol").click(function(e){
       e.preventDefault();
-      var value = $(this).html();
-      console.log(value); 
-      
-      //square root
-      if (value === "&#8730;") {
-          
-      }else if ("=") {
-          
-      }else if ("%") {
-          
-      }else {
-          
-      }
+      var result;
+      var operator = $(this).html();
+       //get current values from GUI
+       var current = $("#currentInput").text();
+       //remove formatting
+       current = current.replace(",", "");
 
+       // for the first value inputted: save values to array
+       if (values.length < 2) {
+           values.push(current);
+           values.push(operator);
+           updateDisplay("", formatForDisplay(current) + " " + operator);
+       }else if (current === "") {
+           values[1] = operator;
+           updateDisplay("", formatForDisplay(values[0]) + " " + operator)
+       }else {
+           result = calculate(values[0], values[1], current);
+           //assign new values to array
+           values[0] = result;
+           values[1] = operator;
+           result = formatForDisplay(result, pastInput);
+           updateDisplay("", result + " " + operator);
+
+       } 
+        console.log(values);
+   });
+   
+   $("#buttonSqrt").click(function(e) {
+       
+   });
+   $("#buttonPercent").click(function(e) {
+       
+   });
+   $("#buttonEqual").click(function(e){
+       
    });
    //when  clear all is clicked
       $("#buttonC").click(function(e){

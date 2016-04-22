@@ -78,7 +78,9 @@ body, html {
 .memory {
     margin-bottom: 0.5em;
 }
-
+.percentFix {
+    font-family: sans-serif;
+}
 @media all and (min-width: 600px) {
     html {
         font-size: 0.6em;
