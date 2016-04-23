@@ -31,17 +31,24 @@ body, html {
     width: 24em;
     padding: 1em;
     margin: auto;
-    margin-bottom: 1em;
-    margin-top: 0.2em;
+    /*margin-bottom: 1em;
+    margin-top: 0.2em;*/
+    margin-top: 0.1em;
+    height: 7em;
+    margin-bottom: 0.4em;
     color: #013239;
 }
 #pastInput {
+    padding-top: 0.5em;
     min-height: 1em;
     font-size: 1.3em;
+    padding-bottom: 0.5em;
+    /*background-color: green;*/
 }
 #currentInput {
     min-height: 1em;
     font-size: 2em;
+    /*background-color: red;*/
 }
 #buttons {
     width: 24em;
