@@ -249,9 +249,12 @@ $(document).ready(function() {
    });
    
    $("#buttonSqrt").click(function(e) {
-       
-       
-       
+       var pastInput = $("#pastInput").text();
+       var current = $("#currentInput").text();
+       current = current.replace(/\,/g, "");
+       var result = Math.sqrt(current);
+       result = formatForDisplay(result);
+       updateDisplay(result, pastInput);
    });
    $("#buttonPercent").click(function(e) {
        
