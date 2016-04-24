@@ -420,9 +420,6 @@ $(document).ready(function() {
         }else if (getChar === ".") {
             decimalInput();
         }
-
-
-
    });
   
    
