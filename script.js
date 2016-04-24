@@ -58,26 +58,9 @@ $(document).ready(function() {
    }
    
    //
-   //calcuation functions
+   //calculation functions
    //
-    function calculatePercent(a, operator, b) {
-        var result;
-        // conver to decimal equivalent of percent
-        b = b/100;
-        if (symbol === "x" || symbol === "divide") {
-            result = calculate(a, operator, b);
-        }
-        else {
-            //if the percentage is added or subtracted from a value:
-            // first find the percentage result of a and then add/subtract that 
-            //value from the original a
-            result = calculate(a, "x", b);
-            result = calculate(a, operator, b);
-        }
-        
-        return result;
-    }
-
+   
     // pass two numbers (can be string) and an arithmetic operator
     // perform calculation based on arithmetic operator    
     function calculate (firstNum, operator, secondNum) {
@@ -103,7 +86,7 @@ $(document).ready(function() {
                 break;
         }// end switch
                 
-         if (value.places !== undefined) {
+         if (value.places !== undefined && operator !== "divide") {
              result = convertToDec(result, value.places, squareDecimalPlaces);
          }       
                 
@@ -218,8 +201,6 @@ $(document).ready(function() {
        //remove formatting
        current = current.replace(/\,/g, "");
 
-        //DEBUGGING CODE
-       console.log( values[0] + " " + values[1] +" " + current + " " + operator);
        // for the first value inputted: save values to array
        if (values[0] === undefined) {
            values.push(current);
@@ -231,23 +212,18 @@ $(document).ready(function() {
        }
         //fix for divide by zero
        else if (current === "0" && values[1] === "divide") {
-           $("#currentInput").html("Error: Infinity");
+           $("#currentInput").html("infinity");
            $("#pastInput").html("")
            equalClicked = true;
            values = [];
        }
        else {
-           //DEBUGGING
-        //    var pastInput = values[0] + " " + values[1] + " " + current;
            result = calculate(values[0], values[1], current);
            //assign new values to array
            values[0] = result;
            values[1] = operator;
            result = formatForDisplay(result);
            updateDisplay("", result + " " + operator);
-
-        //    updateDisplay(result, pastInput);
-
        } 
         
    });
@@ -270,7 +246,7 @@ $(document).ready(function() {
        var current = $("#currentInput").text();
        current = current.replace(/\,/g, "");
        if (current < 0) {
-           $("#currentInput").html("Error: Invalid Input");
+           $("#currentInput").html("invalid input");
            $("#pastInput").html("")
            equalClicked = true;
            values = [];
@@ -297,11 +273,11 @@ $(document).ready(function() {
 
        if (values[1] !== "x") {
 
-            var pastInput = values[0] + " " + values[1] + " " + formatForDisplay(result);
+            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(result);
             // find sum/difference between the percentage result above and the first values and operator inputted
              result = calculate(values[0], values[1], result);
        } else {
-            var pastInput = values[0] + " " + values[1] + " " + current;
+            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(current);
        }
        result = formatForDisplay(result);
        values=[];
@@ -322,7 +298,7 @@ $(document).ready(function() {
        }
        //fix for divide by zero
        else if (current === "0" && values[1] === "divide") {
-            $("#currentInput").html("Error: Infinity");
+            $("#currentInput").html("infinity");
            $("#pastInput").html("");
            equalClicked = true;
            values = [];
