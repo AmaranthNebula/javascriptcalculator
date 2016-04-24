@@ -47,7 +47,7 @@ $(document).ready(function() {
              } else  {
                     pos -=3;
              }    
-            while (pos > 0) {
+            while (pos > 0 && num[pos-1] !== "-") {
                 num.splice(pos, 0, ",");
                 pos -= 3; 
             }
@@ -247,14 +247,34 @@ $(document).ready(function() {
        } 
         
    });
-   
+   //can convert current value to positive or negative value
+   $("#buttonPosNeg").click(function(e){
+      e.preventDefault();
+        //get current values from GUI
+       var current = $("#currentInput").text();
+       //remove formatting
+       current = current.replace(/\,/g, "");
+       var result = calculate(current, "x", "-1");
+       
+       result = formatForDisplay(result);
+       updateDisplay(result,$("#pastInput").html());
+       
+   });
    $("#buttonSqrt").click(function(e) {
+       e.preventDefault();
        var pastInput = $("#pastInput").text();
        var current = $("#currentInput").text();
        current = current.replace(/\,/g, "");
-       var result = Math.sqrt(current);
-       result = formatForDisplay(result);
-       updateDisplay(result, pastInput);
+       if (current < 0) {
+           $("#currentInput").html("Error: Invalid Input");
+           $("#pastInput").html("")
+           equalClicked = true;
+           values = [];
+       }else {
+            var result = Math.sqrt(current);
+            result = formatForDisplay(result);
+            updateDisplay(result, pastInput);
+       }
    });
    $("#buttonPercent").click(function(e) {
        
@@ -290,8 +310,8 @@ $(document).ready(function() {
       $("#buttonC").click(function(e){
       e.preventDefault();
       values = [];
-      $("#pastInput").html("0");
-      $("#currentInput").html("");
+      $("#pastInput").html("");
+      $("#currentInput").html("0");
       
    });
    // when the clear current is clicked
