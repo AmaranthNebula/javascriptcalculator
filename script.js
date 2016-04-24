@@ -83,7 +83,7 @@ $(document).ready(function() {
     function calculate (firstNum, operator, secondNum) {
         // if multiplying or dividing two numbers that are both decimals
         // to convert back to Decimals, divide by 10 to the power of decimal places twice
-        var squareDecimalPlaces = ((operator === "x" || operator === "divide") && firstNum.toString().includes(".") && secondNum.toString().includes("."));
+        var squareDecimalPlaces = ((operator === "x" || operator === "divide"));
         var result;
         //get int values
         var value = convertToInt(firstNum, secondNum);
@@ -103,7 +103,7 @@ $(document).ready(function() {
                 break;
         }// end switch
                 
-         if (value.places !== undefined && operator !== "divide") {
+         if (value.places !== undefined) {
              result = convertToDec(result, value.places, squareDecimalPlaces);
          }       
                 
@@ -237,12 +237,16 @@ $(document).ready(function() {
            values = [];
        }
        else {
+           //DEBUGGING
+        //    var pastInput = values[0] + " " + values[1] + " " + current;
            result = calculate(values[0], values[1], current);
            //assign new values to array
            values[0] = result;
            values[1] = operator;
            result = formatForDisplay(result);
            updateDisplay("", result + " " + operator);
+
+        //    updateDisplay(result, pastInput);
 
        } 
         
@@ -277,6 +281,31 @@ $(document).ready(function() {
        }
    });
    $("#buttonPercent").click(function(e) {
+       e.preventDefault();
+       var current = $("#currentInput").text();
+       current = current.replace(/\,/g, "");
+       // convert to decimal equivalent
+       current = current/100;
+       //set default calculation if no values have been saved
+       if (values[0] === undefined) {
+           values[0] = 0;
+           values[1] = "x";
+       }
+       
+        // find result from values[0] * the current percent in decimal form
+        var result = calculate(values[0], "x", current);
+
+       if (values[1] !== "x") {
+
+            var pastInput = values[0] + " " + values[1] + " " + formatForDisplay(result);
+            // find sum/difference between the percentage result above and the first values and operator inputted
+             result = calculate(values[0], values[1], result);
+       } else {
+            var pastInput = values[0] + " " + values[1] + " " + current;
+       }
+       result = formatForDisplay(result);
+       values=[];
+       updateDisplay(result, pastInput);
        
    });
    $("#buttonEqual").click(function(e){
