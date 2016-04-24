@@ -216,7 +216,7 @@ $(document).ready(function() {
        //get current values from GUI
        var current = $("#currentInput").text();
        //remove formatting
-       current = current.replace(",", "");
+       current = current.replace(/\,/g, "");
 
         //DEBUGGING CODE
        console.log( values[0] + " " + values[1] +" " + current + " " + operator);
@@ -247,7 +247,23 @@ $(document).ready(function() {
        
    });
    $("#buttonEqual").click(function(e){
+       var current = $("#currentInput").text();
+              //get current values from GUI
+       var current = $("#currentInput").text();
+       //remove formatting
+       current = current.replace(/\,/g, "");
        
+       if (values[0] === undefined || current === ""){
+           updateDisplay(current, "");
+       }
+       else {
+           result = calculate(values[0], values[1], current);
+           result = formatForDisplay(result);
+           updateDisplay(result, "");
+       }
+        //clear array
+        values = [];
+        equalClicked = true;
    });
    //when  clear all is clicked
       $("#buttonC").click(function(e){
