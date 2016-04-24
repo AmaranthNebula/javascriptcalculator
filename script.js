@@ -6,6 +6,8 @@ $(document).ready(function() {
    // this function updates the display on the calculator GUI
    // noPast is a boolean that clears the pastInput of all text
    function updateDisplay(result, pastInput) {
+       // if "divide" appears in pastInput, replace with division symbol
+       pastInput = pastInput.replace("divide", "&divide;")
        // clear previous inputs
        $("#pastInput").html("");
        $("#currentInput").html("");
@@ -27,8 +29,9 @@ $(document).ready(function() {
        num = num.toString();
        // if number is larger than display
        // convert to exponential notation
-       if (num.toString().length > 16) {
-           formatted = num.toPrecision(5);
+       if (num.length >= 16) {
+           num = parseFloat(num);
+           num = num.toPrecision(15);
        }
        // if number is less than 16 digits
        // add commas every three digits before decimal point
@@ -61,7 +64,7 @@ $(document).ready(function() {
         var result;
         // conver to decimal equivalent of percent
         b = b/100;
-        if (symbol === "x" || symbol === "&divide;") {
+        if (symbol === "x" || symbol === "divide") {
             result = calculate(a, operator, b);
         }
         else {
@@ -78,11 +81,12 @@ $(document).ready(function() {
     // pass two numbers (can be string) and an arithmetic operator
     // perform calculation based on arithmetic operator    
     function calculate (firstNum, operator, secondNum) {
-        var multiplyOrDivide = false;
+        // if multiplying or dividing two numbers that are both decimals
+        // to convert back to Decimals, divide by 10 to the power of decimal places twice
+        var squareDecimalPlaces = ((operator === "x" || operator === "divide") && firstNum.toString().includes(".") && secondNum.toString().includes("."));
         var result;
         //get int values
         var value = convertToInt(firstNum, secondNum);
-        
         // find the matching symbol and perform calculation
         switch (operator) {
             case "+":
@@ -93,16 +97,14 @@ $(document).ready(function() {
                 break;
             case "x":
                 result = value.first * value.second;
-                operator = true;
                 break;
-            case "&divide;":
+            case "divide":
                 result = value.first / value.second;
-                operator = true;
                 break;
         }// end switch
                 
-         if (value.places !== undefined) {
-             result = convertToDec(result, multiplyOrDivide);
+         if (value.places !== undefined && operator !== "divide") {
+             result = convertToDec(result, value.places, squareDecimalPlaces);
          }       
                 
         return result;
@@ -149,15 +151,15 @@ $(document).ready(function() {
         // if values are multiplied or divided just multipy that product/quotient by 10 to the n power twice
         // n = the number of decimal places in the orignal values
         if (multipyBoolean) {
-            var powerMultiplier = (Math.pow(10, decimalPlaces) * Math.pow(10, decimalPlaces));
+            var powerMultiplier = (Math.pow(Math.pow(10, decimalPlaces), 2));
         }
         // if values are added or subtracted just multipy that sum/difference by 10 to the n power
         // n = the number of decimal places in the orignal values
         else {
             var powerMultiplier = Math.pow(10, decimalPlaces);
         }
-        
-        return num / powerMultiplier;
+        var test = num / powerMultiplier;
+        return test;
     }   
 
 
@@ -180,19 +182,22 @@ $(document).ready(function() {
        e.preventDefault();
        var current = $("#currentInput").text();
        //remove all commas in GUI formatted value
-       current = current.replace(",", "");
+       current = current.replace(/\,/g, "");
        // get Value of button that was pressed
        var value = $(this).html();
        // update display with new number 
-       if (current.length < 16) {
+       if (current.length < 15) {
            
             if (/^0$/.test(current) || equalClicked) {
                 $("#currentInput").text("");
+                current = "";
                 //reset boolean to not clear next input
                 equalClicked = false;
             }
-            $("#currentInput").append(value);
-            
+            // format new input with appropriate commas
+            current += value; 
+            current = formatForDisplay(current);
+            $("#currentInput").html(current);
        }
 
    });
@@ -203,14 +208,20 @@ $(document).ready(function() {
    $(".symbol").click(function(e){
       e.preventDefault();
       var result;
+     if ($(this).is("#buttonDivide")) {
+         var operator = "divide";
+     }else {
       var operator = $(this).html();
+     }
        //get current values from GUI
        var current = $("#currentInput").text();
        //remove formatting
        current = current.replace(",", "");
 
+        //DEBUGGING CODE
+       console.log( values[0] + " " + values[1] +" " + current + " " + operator);
        // for the first value inputted: save values to array
-       if (values.length < 2) {
+       if (values[0] === undefined) {
            values.push(current);
            values.push(operator);
            updateDisplay("", formatForDisplay(current) + " " + operator);
@@ -222,11 +233,11 @@ $(document).ready(function() {
            //assign new values to array
            values[0] = result;
            values[1] = operator;
-           result = formatForDisplay(result, pastInput);
+           result = formatForDisplay(result);
            updateDisplay("", result + " " + operator);
 
        } 
-        console.log(values);
+        
    });
    
    $("#buttonSqrt").click(function(e) {
