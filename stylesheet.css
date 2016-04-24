@@ -81,6 +81,14 @@ body, html {
 .memory {
     margin-bottom: 0.5em;
 }
+.memorySaved {
+    border-color: #03606d;
+    color: #03606d;
+}
+.memorySaved:hover {
+    border-color: #ffd6b0;
+    color: #ffd6b0;
+}
 .percentFix {
     font-family: sans-serif;
 }

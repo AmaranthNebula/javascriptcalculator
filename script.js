@@ -1,7 +1,7 @@
 $(document).ready(function() {
    var values = [];
    var equalClicked = false;
-   var memory;
+   var memory = 0;
    
    // this function updates the display on the calculator GUI
    // noPast is a boolean that clears the pastInput of all text
@@ -152,7 +152,7 @@ $(document).ready(function() {
    
    //event handlers
    //when the decimal character is clicked
-   $(".decimal").click(function(e){
+   $("#buttonDecimal").click(function(e){
        e.preventDefault();
        var current = $("#currentInput").text();
         if (current.length < 13 && current.indexOf(".") === -1) {
@@ -324,12 +324,67 @@ $(document).ready(function() {
       e.preventDefault();
       $("#currentInput").text("0");
    });
+   
+   
    //
-   //             FINISH
+   //       
+   
+         
    //when the memory buttons are clicked
-   $(".memory").click(function(e){
-       
+   // memory values are stored in global "memory" variable
+   // clear value in memory
+   $("#buttonMC").click(function(e){
+      memory = 0;
+      updateMemoryStyle();
+   });
+   // display value saved to memory
+   $("#buttonMR").click(function(e){
+      var recalled = formatForDisplay(memory);
+      $("#currentInput").html(recalled);
    });
    
-    
+    // save to memory
+   $("#buttonMS").click(function(e){
+       // get current value
+      var current = getCurrentValue();
+      memory = current;  
+      updateMemoryStyle();      
+   });
+   // add to memory
+   $("#buttonMAdd").click(function(e){
+      var current = getCurrentValue();
+      memory += current;  
+      updateMemoryStyle();
+   });
+   // subtract from memory
+   $("#buttonMSubtract").click(function(e){
+      var current = getCurrentValue();
+      memory -= current;  
+      updateMemoryStyle();
+   });
+   
+   //TODO
+   // when the memory variable does not equal zero;
+   // make background of all memory buttons orange
+   function updateMemoryStyle() {
+       if (memory !== 0) {
+           $(".memory").addClass("memorySaved");
+       }else {
+          $(".memory").removeClass("memorySaved");  
+       }
+   }         
+   function getCurrentValue() {
+      // get current value
+      var current = $("#currentInput").text();
+      current = current.replace(/\,/g, "");
+      //if there is no current value get previous value
+      if (current === "") {
+          current = values[0];
+      }
+      if (current === undefined) {
+          current = 0;
+      }   
+      
+      return parseFloat(current);
+   }
 });
