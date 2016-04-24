@@ -146,28 +146,19 @@ $(document).ready(function() {
     }   
 
 
-
+    // functions for the eventhandlers - mouse/tap and keyboard events
   
-   
-   
-   //event handlers
-   //when the decimal character is clicked
-   $("#buttonDecimal").click(function(e){
-       e.preventDefault();
+  function decimalInput() {
        var current = $("#currentInput").text();
         if (current.length < 13 && current.indexOf(".") === -1) {
             $("#currentInput").append(".");
-        }
-        
-   });
-   // when a number is clicked
-   $(".numeral").click(function(e) {
-       e.preventDefault();
+        }      
+  }
+  function numeralInput(value) {
        var current = $("#currentInput").text();
        //remove all commas in GUI formatted value
        current = current.replace(/\,/g, "");
-       // get Value of button that was pressed
-       var value = $(this).html();
+
        // update display with new number 
        if (current.length < 15 || equalClicked) {
            
@@ -181,21 +172,10 @@ $(document).ready(function() {
             current += value; 
             current = formatForDisplay(current);
             $("#currentInput").html(current);
-       }
-
-   });
-   //
-   //     
-
-   //when a mathematical symbol is clicked
-   $(".symbol").click(function(e){
-      e.preventDefault();
-      var result;
-     if ($(this).is("#buttonDivide")) {
-         var operator = "divide";
-     }else {
-      var operator = $(this).html();
-     }
+       }      
+  } 
+ function symbolInput(operator) {
+      var result;     
        //get current values from GUI
        var current = $("#currentInput").text();
        //remove formatting
@@ -224,8 +204,86 @@ $(document).ready(function() {
            values[1] = operator;
            result = formatForDisplay(result);
            updateDisplay("", result + " " + operator);
-       } 
-        
+       }      
+ }  
+ function percentInput() {
+       var current = $("#currentInput").text();
+       current = current.replace(/\,/g, "");
+       // convert to decimal equivalent
+       current = current/100;
+       //set default calculation if no values have been saved
+       if (values[0] === undefined) {
+           values[0] = 0;
+           values[1] = "x";
+       }
+       
+        // find result from values[0] * the current percent in decimal form
+        var result = calculate(values[0], "x", current);
+
+       if (values[1] !== "x") {
+
+            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(result);
+            // find sum/difference between the percentage result above and the first values and operator inputted
+             result = calculate(values[0], values[1], result);
+       } else {
+            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(current);
+       }
+       result = formatForDisplay(result);
+       values=[];
+       updateDisplay(result, pastInput);     
+ }
+ function equalInput() {
+       var current = $("#currentInput").text();
+              //get current values from GUI
+       var current = $("#currentInput").text();
+       //remove formatting
+       current = current.replace(/\,/g, "");
+       
+       if (values[0] === undefined || current === ""){
+           updateDisplay(current, "");
+          
+       }
+       //fix for divide by zero
+       else if (current === "0" && values[1] === "divide") {
+            $("#currentInput").html("infinity");
+           $("#pastInput").html("");
+           equalClicked = true;
+           values = [];
+       }else {
+           result = calculate(values[0], values[1], current);
+           result = formatForDisplay(result);
+           updateDisplay(result, "");
+       }
+        //clear array
+        values = [];
+        equalClicked = true;     
+ }
+ 
+ 
+ 
+   
+   //event handlers
+   //when the decimal character is clicked
+   $("#buttonDecimal").click(function(e){
+       e.preventDefault();
+       decimalInput();
+   });
+   // when a number is clicked
+   $(".numeral").click(function(e) {
+       e.preventDefault();
+       // get Value of button that was pressed
+       var value = $(this).html();       
+       numeralInput(value);
+   });
+   //when a mathematical symbol is clicked
+   $(".symbol").click(function(e){
+      e.preventDefault();
+     if ($(this).is("#buttonDivide")) {
+         var operator = "divide";
+     }else {
+      var operator = $(this).html();
+     }
+     symbolInput(operator);
    });
    //can convert current value to positive or negative value
    $("#buttonPosNeg").click(function(e){
@@ -258,58 +316,11 @@ $(document).ready(function() {
    });
    $("#buttonPercent").click(function(e) {
        e.preventDefault();
-       var current = $("#currentInput").text();
-       current = current.replace(/\,/g, "");
-       // convert to decimal equivalent
-       current = current/100;
-       //set default calculation if no values have been saved
-       if (values[0] === undefined) {
-           values[0] = 0;
-           values[1] = "x";
-       }
-       
-        // find result from values[0] * the current percent in decimal form
-        var result = calculate(values[0], "x", current);
-
-       if (values[1] !== "x") {
-
-            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(result);
-            // find sum/difference between the percentage result above and the first values and operator inputted
-             result = calculate(values[0], values[1], result);
-       } else {
-            var pastInput = formatForDisplay(values[0]) + " " + values[1] + " " + formatForDisplay(current);
-       }
-       result = formatForDisplay(result);
-       values=[];
-       updateDisplay(result, pastInput);
-       
+       percentInput();
    });
    $("#buttonEqual").click(function(e){
        e.preventDefault();
-       var current = $("#currentInput").text();
-              //get current values from GUI
-       var current = $("#currentInput").text();
-       //remove formatting
-       current = current.replace(/\,/g, "");
-       
-       if (values[0] === undefined || current === ""){
-           updateDisplay(current, "");
-          
-       }
-       //fix for divide by zero
-       else if (current === "0" && values[1] === "divide") {
-            $("#currentInput").html("infinity");
-           $("#pastInput").html("");
-           equalClicked = true;
-           values = [];
-       }else {
-           result = calculate(values[0], values[1], current);
-           result = formatForDisplay(result);
-           updateDisplay(result, "");
-       }
-        //clear array
-        values = [];
-        equalClicked = true;
+       equalInput();
    });
    //when  clear all is clicked
       $("#buttonC").click(function(e){
@@ -325,11 +336,6 @@ $(document).ready(function() {
       $("#currentInput").text("0");
    });
    
-   
-   //
-   //       
-   
-         
    //when the memory buttons are clicked
    // memory values are stored in global "memory" variable
    // clear value in memory
@@ -363,9 +369,8 @@ $(document).ready(function() {
       updateMemoryStyle();
    });
    
-   //TODO
    // when the memory variable does not equal zero;
-   // make background of all memory buttons orange
+   // add class to make border outline a darker blue and on hover a lighter orange
    function updateMemoryStyle() {
        if (memory !== 0) {
            $(".memory").addClass("memorySaved");
@@ -387,4 +392,38 @@ $(document).ready(function() {
       
       return parseFloat(current);
    }
+   
+   //
+   // keyboard shortcuts
+   //
+   $(window).on("keypress", function(e) {
+        // get the character code of the key that was pressed       
+        var getChar = e.which;
+        // check if the enter key was presed/ if not convert to actual character
+        if (getChar === 13) {
+            getChar = "="
+        } else {
+            getChar = String.fromCharCode(getChar);
+        }
+        if (getChar === "/") {
+            getChar = "divide";
+        }
+        // check if the input is a number
+        if (/^\d$/.test(getChar)) {
+            numeralInput(getChar);
+        }else if (/\+|\-|\*/g.test(getChar) || getChar === "divide") {
+            symbolInput(getChar);
+        }else if (getChar === "=") {
+            equalInput();
+        }else if (getChar === "%") {
+            percentInput();
+        }else if (getChar === ".") {
+            decimalInput();
+        }
+
+
+
+   });
+  
+   
 });
