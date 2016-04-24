@@ -399,19 +399,16 @@ $(document).ready(function() {
    $(window).on("keypress", function(e) {
         // get the character code of the key that was pressed       
         var getChar = e.which;
-        // check if the enter key was presed/ if not convert to actual character
-        if (getChar === 13) {
-            getChar = "="
-        } else {
-            getChar = String.fromCharCode(getChar);
-        }
+        getChar = String.fromCharCode(getChar);
         if (getChar === "/") {
             getChar = "divide";
+        }else if (getChar === "*") {
+            getChar = "x";
         }
         // check if the input is a number
         if (/^\d$/.test(getChar)) {
             numeralInput(getChar);
-        }else if (/\+|\-|\*/g.test(getChar) || getChar === "divide") {
+        }else if (/x|\-|\*/g.test(getChar) || getChar === "divide") {
             symbolInput(getChar);
         }else if (getChar === "=") {
             equalInput();
