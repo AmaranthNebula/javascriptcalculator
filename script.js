@@ -186,7 +186,7 @@ $(document).ready(function() {
        // get Value of button that was pressed
        var value = $(this).html();
        // update display with new number 
-       if (current.length < 15) {
+       if (current.length < 15 || equalClicked) {
            
             if (/^0$/.test(current) || equalClicked) {
                 $("#currentInput").text("");
@@ -228,7 +228,15 @@ $(document).ready(function() {
        }else if (current === "") {
            values[1] = operator;
            updateDisplay("", formatForDisplay(values[0]) + " " + operator)
-       }else {
+       }
+        //fix for divide by zero
+       else if (current === "0" && values[1] === "divide") {
+           $("#currentInput").html("Error: Infinity");
+           $("#pastInput").html("")
+           equalClicked = true;
+           values = [];
+       }
+       else {
            result = calculate(values[0], values[1], current);
            //assign new values to array
            values[0] = result;
@@ -242,11 +250,14 @@ $(document).ready(function() {
    
    $("#buttonSqrt").click(function(e) {
        
+       
+       
    });
    $("#buttonPercent").click(function(e) {
        
    });
    $("#buttonEqual").click(function(e){
+       e.preventDefault();
        var current = $("#currentInput").text();
               //get current values from GUI
        var current = $("#currentInput").text();
@@ -255,8 +266,15 @@ $(document).ready(function() {
        
        if (values[0] === undefined || current === ""){
            updateDisplay(current, "");
+          
        }
-       else {
+       //fix for divide by zero
+       else if (current === "0" && values[1] === "divide") {
+            $("#currentInput").html("Error: Infinity");
+           $("#pastInput").html("");
+           equalClicked = true;
+           values = [];
+       }else {
            result = calculate(values[0], values[1], current);
            result = formatForDisplay(result);
            updateDisplay(result, "");
@@ -269,8 +287,8 @@ $(document).ready(function() {
       $("#buttonC").click(function(e){
       e.preventDefault();
       values = [];
-      $("#currentInput").html("0");
-      $("#pastInput").html("");
+      $("#pastInput").html("0");
+      $("#currentInput").html("");
       
    });
    // when the clear current is clicked
