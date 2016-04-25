@@ -149,7 +149,7 @@ $(document).ready(function() {
   
   function decimalInput() {
        var current = $("#currentInput").text();
-        if (current.length < 13 && current.indexOf(".") === -1) {
+        if (current.length < 13 && current.indexOf(".") === -1 && !equalClicked) {
             $("#currentInput").append(".");
         }      
   }
