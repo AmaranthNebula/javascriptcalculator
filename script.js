@@ -20,7 +20,6 @@ $(document).ready(function() {
        if(Boolean(pastInput)) {
            $("#pastInput").html(pastInput);
        }
-       
    }
    
    //format values for display
@@ -172,7 +171,7 @@ $(document).ready(function() {
             current += value; 
             current = formatForDisplay(current);
             $("#currentInput").html(current);
-       }      
+       } 
   } 
  function symbolInput(operator) {
       var result;     
@@ -296,7 +295,6 @@ $(document).ready(function() {
        
        result = formatForDisplay(result);
        updateDisplay(result,$("#pastInput").html());
-       
    });
    $("#buttonSqrt").click(function(e) {
        e.preventDefault();
@@ -399,16 +397,23 @@ $(document).ready(function() {
    $(window).on("keypress", function(e) {
         // get the character code of the key that was pressed       
         var getChar = e.which;
-        getChar = String.fromCharCode(getChar);
-        if (getChar === "/") {
-            getChar = "divide";
-        }else if (getChar === "*") {
-            getChar = "x";
+
+        // allow space bar to be used as the enter key
+        if (getChar === 32) {
+            getChar = "=";
+        }else {
+            getChar = String.fromCharCode(getChar);
+            
+            if (getChar === "/") {
+                getChar = "divide";
+            }else if (getChar === "*") {
+                getChar = "x";
+            }
         }
         // check if the input is a number
         if (/^\d$/.test(getChar)) {
             numeralInput(getChar);
-        }else if (/x|\-|\*/g.test(getChar) || getChar === "divide") {
+        }else if (/\+|\-|x/g.test(getChar) || getChar === "divide") {
             symbolInput(getChar);
         }else if (getChar === "=") {
             equalInput();
